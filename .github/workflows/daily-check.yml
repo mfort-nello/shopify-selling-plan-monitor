@@ -1,0 +1,25 @@
+name: Daily selling-plan check
+
+on:
+  schedule:
+    # 14:00 UTC daily = 9am Chicago (CDT) / 8am Chicago (CST). Adjust as needed.
+    - cron: "0 14 * * *"
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run selling-plan check
+        run: node check-selling-plans.mjs
+        env:
+          SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
+          SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
+          SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
