@@ -213,8 +213,10 @@ async function main() {
   }
 
   await postToSlack(locked);
-  console.error("Posted alert to Slack.");
-  process.exit(1); // non-zero so the GH Actions run shows red
+  console.log("Posted alert to Slack.");
+  // Run stays green: the Slack message is the signal, not the GitHub status.
+  // Real errors (OAuth, network, Slack post failure) still throw and exit non-zero
+  // via the .catch handler below.
 }
 
 main().catch((err) => {
