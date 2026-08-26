@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node check-selling-plans.mjs"
+    "check": "node check-selling-plans.mjs",
+    "check:shipping": "node check-shipping-profiles.mjs",
+    "test": "node test-shipping-profiles.mjs"
   },
   "engines": {
     "node": ">=20"

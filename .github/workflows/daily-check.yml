@@ -1,4 +1,4 @@
-name: Daily selling-plan check
+name: Daily Shopify config checks
 
 on:
   schedule:
@@ -16,8 +16,22 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Logic tests (no network, no secrets)
+        run: node test-shipping-profiles.mjs
+
       - name: Run selling-plan check
         run: node check-selling-plans.mjs
+        env:
+          SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
+          SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
+          SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      # always() so a failure in the selling-plan check can't silently hide
+      # shipping-profile drift, and vice versa.
+      - name: Run shipping-profile drift check
+        if: always()
+        run: node check-shipping-profiles.mjs
         env:
           SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
           SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
